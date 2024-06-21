@@ -1,10 +1,6 @@
 import mongoose from "mongoose";
 
 const teamSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, "Please provide team name"],
-  },
   country: {
     type: String,
     required: [true, "Please provide country name"],

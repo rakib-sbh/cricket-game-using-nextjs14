@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import styles from "./page.module.css";
 import data from "@/data/team-and-players";
 import { generateRandomNumber } from "@/utils/generateRandomNumber";
+import { createGame } from "./actions/createGame";
 
 const scoreTypes = [0, 1, 2, 3, 4, 6, -1];
 
@@ -24,10 +25,12 @@ const changeStrike = (player) => {
 };
 
 export default function Home() {
+  const [playingOver, setPlayingOver] = useState("");
   const [players, setPlayer] = useState({
     countryOne: "",
     countryTwo: "",
   });
+  const [winnerDecision, setWinnerDecision] = useState(null);
   const [bowlers, setbowlers] = useState([]);
   const [nextbowlers, setNextbowlers] = useState([]);
   const [currentBoller, setCurrentBoller] = useState(null);
@@ -67,6 +70,8 @@ export default function Home() {
   const handleWinnerDecision = (event) => {
     const { name, value } = event.target;
     console.log(`${tossWinner} choose ${value}`);
+
+    setWinnerDecision(value);
 
     if (value === "batting" && tossWinner === players.countryOne) {
       setBatsmen(data[players.countryOne]);
@@ -212,6 +217,14 @@ export default function Home() {
           </select>
         </div>
       </form>
+      <div>
+        <label htmlFor="playingOver">How many overs : </label>
+        <input
+          type="number"
+          value={playingOver}
+          onChange={(e) => setPlayingOver(e.target.value)}
+        />
+      </div>
       <h1>First Country: {players.countryOne}</h1>
       <h1>Second Country: {players.countryTwo}</h1>
       {players.countryOne && players.countryTwo && (
@@ -233,6 +246,19 @@ export default function Home() {
           <option value="bolling">Bolling</option>
         </select>
       </div>
+      <button
+        onClick={() =>
+          createGame({
+            battingCountry,
+            bollingCountry,
+            tossWinner,
+            playingOver,
+            winnerDecision,
+          })
+        }
+      >
+        Create A Game
+      </button>
       <div>
         <h3>Batsman</h3>
         <ul>

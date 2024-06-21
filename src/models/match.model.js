@@ -35,24 +35,16 @@ const matchSchema = new mongoose.Schema({
   runsScored: { type: Number, default: 0 },
   wicketsLost: { type: Number, default: 0 },
   oversPlayed: { type: Number, default: 0 },
-  batsmen: [
+  battingTeamPlayers: [
     {
-      player: { type: mongoose.Schema.Types.ObjectId, ref: "Player" },
-      runsScored: { type: Number, default: 0 },
-      ballsFaced: { type: Number, default: 0 },
-      fours: { type: Number, default: 0 },
-      sixes: { type: Number, default: 0 },
-      dismissalInfo: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Player",
     },
   ],
-  bowlers: [
+  bollingTeamPlayers: [
     {
-      player: { type: mongoose.Schema.Types.ObjectId, ref: "Player" },
-      oversBowled: { type: Number, default: 0 },
-      maidens: { type: Number, default: 0 },
-      runsConceded: { type: Number, default: 0 },
-      wicketsTaken: { type: Number, default: 0 },
-      economyRate: { type: Number, default: 0 },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Player",
     },
   ],
 });
