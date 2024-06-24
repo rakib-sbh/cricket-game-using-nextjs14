@@ -3,6 +3,7 @@ const teamAndPlayers = {
     {
       name: "Sakib Al Hasan",
       roles: ["Captain", "All Rounder"],
+      country: "Bangladesh",
     },
     {
       name: "Nazmul Hassain Shanto",

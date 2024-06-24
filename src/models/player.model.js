@@ -14,6 +14,14 @@ const playerSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  numberOfFours: {
+    type: Number,
+    default: 0,
+  },
+  numberOfSixes: {
+    type: Number,
+    default: 0,
+  },
   numberOfRuns: {
     type: Number,
     default: 0,
@@ -30,5 +38,7 @@ const playerSchema = new mongoose.Schema({
 });
 
 const Player = mongoose.models.Player || mongoose.model("Player", playerSchema);
+
+export { playerSchema };
 
 export default Player;
