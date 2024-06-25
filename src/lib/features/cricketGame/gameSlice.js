@@ -52,7 +52,13 @@ const gameSlice = createSlice({
     updateWickets: (state, action) => {
       state.firstInning.totalWickets += 1;
     },
-    changeStrike: (state, action) => {},
+    changeStrike: (state, action) => {
+      const { currentInning } = action.payload;
+      const batsman = state[currentInning].strikeBatsman;
+      state[currentInning].strikeBatsman =
+        state[currentInning].nonStrikeBatsman;
+      state[currentInning].nonStrikeBatsman = batsman;
+    },
     updateBatsmanRun: (state, action) => {
       const { currentInning, score } = action.payload;
       state[currentInning].strikeBatsman.numberOfRuns += score;
@@ -71,6 +77,7 @@ export const {
   initializeGame,
   updateTotalRuns,
   updateWickets,
+  changeStrike,
   updateBatsmanRun,
 } = gameSlice.actions;
 

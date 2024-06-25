@@ -10,6 +10,7 @@ import {
   initializeGame,
   updateTotalRuns,
   updateWickets,
+  changeStrike,
   updateBatsmanRun,
 } from "@/lib/features/cricketGame/gameSlice";
 import { generateRandomNumber } from "@/utils/generateRandomNumber";
@@ -34,6 +35,7 @@ const CricketGame = ({ params }) => {
     if (score === -1) {
       setCurrentScore("Wicket");
       dispatch(updateWickets());
+      dispatch(changeStrike({ currentInning }));
     } else {
       setCurrentScore(score);
       dispatch(updateTotalRuns(score));
