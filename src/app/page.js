@@ -30,7 +30,6 @@ const Page = () => {
 
   const handleOvers = (e) => {
     setOvers(e.target.value);
-    console.log(typeof e.target.value);
   };
 
   const handleToss = () => {

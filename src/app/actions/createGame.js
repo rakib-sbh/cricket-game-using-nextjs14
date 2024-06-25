@@ -53,12 +53,20 @@ const createGame = async ({ teams, overs, tossWinner, winnerDecision }) => {
     bowlingCountry,
     battingCountryPlayers,
     bowlingCountryPlayers,
+    strikeBatsman: battingCountryPlayers[0],
+    nonStrikeBatsman: battingCountryPlayers[1],
+    currentBowler: bowlingCountryPlayers[0],
+    totalOvers: overs,
   };
   let secondInning = {
     battingCountry: bowlingCountry,
     bowlingCountry: battingCountry,
     battingCountryPlayers: bowlingCountryPlayers,
     bowlingCountryPlayers: battingCountryPlayers,
+    strikeBatsman: bowlingCountryPlayers[0],
+    nonStrikeBatsman: bowlingCountryPlayers[1],
+    currentBowler: battingCountryPlayers[0],
+    totalOvers: overs,
   };
 
   let match = new Match({

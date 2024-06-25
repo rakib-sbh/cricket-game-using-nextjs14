@@ -26,6 +26,10 @@ const inningSchema = new mongoose.Schema({
   nonStrikeBatsman: {
     type: playerSchema,
   },
+  nextBatsmanIndex: {
+    type: Number,
+    default: 2,
+  },
   currentBowler: {
     type: playerSchema,
   },
@@ -38,12 +42,16 @@ const inningSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  totalOvers: {
+    type: Number,
+    default: 50,
+  },
   oversPlayed: {
     type: Number,
     default: 0,
   },
 
-  completed: {
+  isCompleted: {
     type: Boolean,
     default: false,
   },
