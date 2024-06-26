@@ -12,6 +12,8 @@ import {
   updateWickets,
   changeStrike,
   updateBatsmanRun,
+  bowlBall,
+  setCurrentInning,
 } from "@/lib/features/cricketGame/gameSlice";
 import { generateRandomNumber } from "@/utils/generateRandomNumber";
 
@@ -22,11 +24,10 @@ const CricketGame = ({ params }) => {
   const dispatch = useDispatch();
 
   const [currentScore, setCurrentScore] = useState("");
-  const [currentInning, setCurrentInning] = useState("");
-
-  const firstInning = useSelector((state) => state.game.firstInning);
 
   const gameState = useSelector((state) => state.game);
+  const currentInning = gameState.currentInning;
+  const inningData = gameState[currentInning];
 
   const handlePlay = () => {
     const random = generateRandomNumber(7);
@@ -34,22 +35,26 @@ const CricketGame = ({ params }) => {
 
     if (score === -1) {
       setCurrentScore("Wicket");
+      dispatch(bowlBall({ score: "wicket" }));
       dispatch(updateWickets());
-      dispatch(changeStrike({ currentInning }));
+      // dispatch(changeStrike());
     } else {
       setCurrentScore(score);
+      dispatch(bowlBall({ score }));
       dispatch(updateTotalRuns(score));
-      dispatch(updateBatsmanRun({ currentInning, score }));
+      dispatch(updateBatsmanRun({ score }));
+
+      if (score % 2 !== 0) {
+        dispatch(changeStrike());
+      }
     }
   };
 
   useEffect(() => {
     const fetchMatchData = async () => {
       const data = await fetchGame(id);
-      if (!data.firstInning.isCompleted) {
-        setCurrentInning("firstInning");
-      } else {
-        setCurrentInning("secondInning");
+      if (data.firstInning.isCompleted) {
+        dispatch(setCurrentInning("secondInning"));
       }
       dispatch(initializeGame(data));
     };
@@ -58,18 +63,19 @@ const CricketGame = ({ params }) => {
   }, [id]);
 
   useEffect(() => {
-    console.log("updated gamestate", gameState);
     if (typeof gameState.firstInning.strikeBatsman === "object") {
       updateGame({ id, gameState });
     }
+
+    console.log("current balls : ", inningData.currentOverBalls);
   }, [currentScore]);
 
-  console.log("first inning", firstInning);
+  // console.log("first inning", inningData);
 
   return (
     <div>
       <h2>Welcome to specific cricket game</h2>
-      {firstInning.isCompleted ? (
+      {gameState.firstInning.isCompleted ? (
         <div>
           <p>First Innings completed</p>
         </div>
@@ -77,12 +83,14 @@ const CricketGame = ({ params }) => {
         <div>
           <p>First Inning is Runing</p>
           <div>
-            <p>Batting Country : {firstInning?.battingCountry}</p>
-            <p>Total Overs : {firstInning?.totalOvers}</p>
-            <p>Total Runs : {firstInning?.totalRuns}</p>
-            <p>Wickets : {firstInning?.totalWickets}</p>
+            <p>Batting Country : {inningData?.battingCountry}</p>
+            <p>Total Overs : {inningData?.totalOvers}</p>
+            <p>Played Overs : {inningData?.oversPlayed}</p>
+            <p>Current Over Balls : {inningData?.currentOverBalls}</p>
+            <p>Total Runs : {inningData?.totalRuns}</p>
+            <p>Wickets : {inningData?.totalWickets}</p>
           </div>
-          <p>Bowling Country : {firstInning?.bowlingCountry}</p>
+          <p>Bowling Country : {inningData?.bowlingCountry}</p>
           <div>
             <p>Batsmen</p>
             <div
@@ -92,10 +100,10 @@ const CricketGame = ({ params }) => {
                 padding: "1rem",
               }}
             >
-              <p>Stike : {firstInning?.strikeBatsman.name}</p>
-              <p>Fours : {firstInning?.strikeBatsman?.numberOfFours}</p>
-              <p>Sixes : {firstInning?.strikeBatsman?.numberOfSixes}</p>
-              <p>Runs : {firstInning?.strikeBatsman?.numberOfRuns}</p>
+              <p>Stike : {inningData?.strikeBatsman.name}</p>
+              <p>Fours : {inningData?.strikeBatsman?.numberOfFours}</p>
+              <p>Sixes : {inningData?.strikeBatsman?.numberOfSixes}</p>
+              <p>Runs : {inningData?.strikeBatsman?.numberOfRuns}</p>
             </div>
             <div
               style={{
@@ -104,10 +112,10 @@ const CricketGame = ({ params }) => {
                 padding: "1rem",
               }}
             >
-              <p>Non Stike : {firstInning?.nonStrikeBatsman.name} </p>
-              <p>Fours : {firstInning?.nonStrikeBatsman?.numberOfFours}</p>
-              <p>Sixes : {firstInning?.nonStrikeBatsman?.numberOfSixes}</p>
-              <p>Runs : {firstInning?.nonStrikeBatsman?.numberOfRuns}</p>
+              <p>Non Stike : {inningData?.nonStrikeBatsman.name} </p>
+              <p>Fours : {inningData?.nonStrikeBatsman?.numberOfFours}</p>
+              <p>Sixes : {inningData?.nonStrikeBatsman?.numberOfSixes}</p>
+              <p>Runs : {inningData?.nonStrikeBatsman?.numberOfRuns}</p>
             </div>
             <div
               style={{
@@ -116,10 +124,10 @@ const CricketGame = ({ params }) => {
                 padding: "1rem",
               }}
             >
-              <p>Bowler : {firstInning?.currentBowler?.name}</p>
-              <p>Wickets : {firstInning?.currentBowler?.numberOfWickets}</p>
+              <p>Bowler : {inningData?.currentBowler?.name}</p>
+              <p>Wickets : {inningData?.currentBowler?.numberOfWickets}</p>
               <p>
-                Total Ball : {firstInning?.currentBowler?.totalBallDelivered}
+                Total Ball : {inningData?.currentBowler?.totalBallDelivered}
               </p>
             </div>
             {currentScore && (

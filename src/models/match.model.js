@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
 import { playerSchema } from "./player.model";
 
 const inningSchema = new mongoose.Schema({
@@ -51,6 +51,16 @@ const inningSchema = new mongoose.Schema({
     default: 0,
   },
 
+  currentOverBalls: {
+    type: Number,
+    default: 0,
+  },
+  currentOverScores: [
+    {
+      type: mongoose.Schema.Types.Mixed,
+    },
+  ],
+
   isCompleted: {
     type: Boolean,
     default: false,
@@ -60,9 +70,12 @@ const inningSchema = new mongoose.Schema({
 const matchSchema = new mongoose.Schema({
   firstInning: inningSchema,
   secondInning: inningSchema,
-  currentOver: {
-    type: Number,
-    default: 0,
+  currentRun: {
+    type: mongoose.Schema.Types.Mixed,
+  },
+  currentInning: {
+    type: String,
+    default: "firstInning",
   },
   target: {
     type: Number,

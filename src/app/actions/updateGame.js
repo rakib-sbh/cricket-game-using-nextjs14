@@ -7,12 +7,12 @@ const updateGame = async ({ id, gameState }) => {
   // db connection
   connect();
 
-  let match = await Match.findById(id);
-
-  Object.assign(match, gameState);
-
-  await match.save();
-  console.log("Match saved successfully");
+  try {
+    await Match.findByIdAndUpdate(id, gameState, { new: true });
+    console.log("Game state updated");
+  } catch (error) {
+    console.log("Error updating game state");
+  }
 };
 
 export { updateGame };

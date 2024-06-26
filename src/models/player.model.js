@@ -27,7 +27,7 @@ const playerSchema = new mongoose.Schema({
     default: 0,
   },
   wicketBy: String,
-  totalOverPlayed: {
+  numberOfBallsPlayed: {
     type: Number,
     default: 0,
   },
