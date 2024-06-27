@@ -51,73 +51,6 @@ const gameSlice = createSlice({
     initializeGame: (_state, action) => {
       return action.payload;
     },
-    updateTotalRuns: (state, action) => {
-      const inning = state.currentInning;
-      state[inning].totalRuns += action.payload;
-    },
-    updateWickets: (state, action) => {
-      const inning = state.currentInning;
-      state[inning].totalWickets += 1;
-
-      // bowler related update
-      const currentBowlerIndex = state[inning].bowlingCountryPlayers.findIndex(
-        (player) => player.name === state[inning].currentBowler.name
-      );
-      if (currentBowlerIndex !== -1) {
-        state[inning].bowlingCountryPlayers[
-          currentBowlerIndex
-        ].numberOfWickets += 1;
-      }
-      state[inning].currentBowler.numberOfWickets += 1;
-
-      // batsman related update
-      const strikeBatsmanIndex = state[inning].battingCountryPlayers.findIndex(
-        (player) => player.name === state[inning].strikeBatsman.name
-      );
-      // update wicketBy field
-      if (strikeBatsmanIndex !== -1) {
-        state[inning].battingCountryPlayers[strikeBatsmanIndex].wicketBy =
-          state[inning].currentBowler.name;
-      }
-      // change strike batsman
-      state[inning].strikeBatsman =
-        state[inning].battingCountryPlayers[state[inning].nextBatsmanIndex++];
-    },
-    changeStrike: (state, action) => {
-      const inning = state.currentInning;
-      const batsman = state[inning].strikeBatsman;
-      state[inning].strikeBatsman = state[inning].nonStrikeBatsman;
-      state[inning].nonStrikeBatsman = batsman;
-    },
-    updateBatsmanRun: (state, action) => {
-      const inning = state.currentInning;
-      const { score } = action.payload;
-
-      state[inning].strikeBatsman.numberOfRuns += score;
-      state[inning].strikeBatsman.numberOfBallsPlayed += 1;
-
-      if (score == 4) {
-        state[inning].strikeBatsman.numberOfFours += 1;
-      }
-      if (score == 6) {
-        state[inning].strikeBatsman.numberOfSixes += 1;
-      }
-
-      // update the batsman in the battingCountryPlayers array
-      const batsmanIndex = state[inning].battingCountryPlayers.findIndex(
-        (player) => player.name === state[inning].strikeBatsman.name
-      );
-
-      if (batsmanIndex !== -1) {
-        state[inning].battingCountryPlayers[batsmanIndex] = {
-          ...state[inning].battingCountryPlayers[batsmanIndex],
-          numberOfRuns: state[inning].strikeBatsman.numberOfRuns,
-          numberOfBallsPlayed: state[inning].strikeBatsman.numberOfBallsPlayed,
-          numberOfFours: state[inning].strikeBatsman.numberOfFours,
-          numberOfSixes: state[inning].strikeBatsman.numberOfSixes,
-        };
-      }
-    },
     selectBowler: (state, action) => {
       const inning = state.currentInning;
       const playerName = action.payload;
@@ -126,6 +59,8 @@ const gameSlice = createSlice({
         (player) => player.name === playerName
       );
       state[inning].bowlerSelected = true;
+      state[inning].currentOverBalls = 0;
+      state[inning].currentOverScores = [];
     },
     bowlBall: (state, action) => {
       const inning = state.currentInning;
@@ -164,6 +99,8 @@ const gameSlice = createSlice({
       );
 
       if (score === -1) {
+        // also increase the total number of wickets of the innings
+        state[inning].totalWickets += 1;
         // this is wicket. so update numberOfWickets of the bowler
         state[inning].currentBowler.numberOfWickets += 1;
         const bowlerIndex = state[inning].bowlingCountryPlayers.findIndex(
@@ -188,6 +125,8 @@ const gameSlice = createSlice({
         }
       } else {
         //! score is not wicket. Score can be (0, 1, 2, 3, 4, 6)
+        // update innings total run
+        state[inning].totalRuns += score;
         // update current batsman score
         state[inning].strikeBatsman.numberOfRuns += score;
         if (score == 4) {
@@ -204,12 +143,37 @@ const gameSlice = createSlice({
         };
       }
 
-      // ! decision about strike change or innings complete
+      // ! decision about strike change or innings complete or match complete
       if (
-        state[inning].oversPlayed === state[inning].totalOvers ||
-        state[inning].totalWickets === 10
+        inning === "firstInning" &&
+        (state[inning].oversPlayed == state[inning].totalOvers ||
+          state[inning].totalWickets === 10)
       ) {
-        //TODO: inning completed. Write logic
+        //TODO: implement functionality
+        state.firstInning.isCompleted = true;
+        state.currentInning = "secondInning";
+        state.secondInning.battingCountryPlayers =
+          state.firstInning.bowlingCountryPlayers;
+        state.secondInning.bowlingCountryPlayers =
+          state.firstInning.battingCountryPlayers;
+        state.target = state.firstInning.totalRuns + 1;
+      } else if (
+        inning === "secondInning" &&
+        state[inning].totalRuns >= state.target &&
+        (state[inning].oversPlayed <= state[inning].totalOvers ||
+          state[inning].totalWickets <= 10)
+      ) {
+        // second inning is completed and second inning batting country is winner
+        state.secondInning.isCompleted = true;
+        state.winner = state[inning].battingCountry;
+      } else if (
+        inning === "secondInning" &&
+        state[inning].totalRuns < state.target &&
+        (state[inning].oversPlayed === state[inning].totalOvers ||
+          state[inning].totalWickets === 10)
+      ) {
+        state.secondInning.isCompleted = true;
+        state.winner = state[inning].bowlingCountry;
       } else {
         // inning is not completed.
         // if the last score is wicket and it is the last ball of the over
@@ -238,18 +202,15 @@ const gameSlice = createSlice({
           state[inning].nonStrikeBatsman = batsman;
         }
       }
+
+      //! select next bowler based on current over balls
+      if (state[inning].currentOverBalls === 6) {
+        state[inning].bowlerSelected = false;
+      }
     },
   },
 });
 
-export const {
-  initializeGame,
-  updateTotalRuns,
-  updateWickets,
-  changeStrike,
-  updateBatsmanRun,
-  selectBowler,
-  bowlBall,
-} = gameSlice.actions;
+export const { initializeGame, selectBowler, bowlBall } = gameSlice.actions;
 
 export default gameSlice.reducer;

@@ -6,10 +6,8 @@ import data from "@/data/team-and-players";
 import { generateRandomNumber } from "@/utils/generateRandomNumber";
 import { createGame } from "./actions/createGame";
 
-const scoreTypes = [0, 1, 2, 3, 4, 6, -1];
 const countries = Object.keys(data);
-
-let batsmanIndex = 0;
+const overValues = [1, 2, 3, 5, 10];
 
 const Page = () => {
   const [teams, setTeams] = useState({
@@ -60,7 +58,12 @@ const Page = () => {
       {/* Selecting the first team */}
       <div>
         <label htmlFor="firstTeam">Select First Team : </label>
-        <select id="firstTeam" onChange={selectTeams} name="firstTeam">
+        <select
+          id="firstTeam"
+          onChange={selectTeams}
+          name="firstTeam"
+          disabled={tossWinner !== ""}
+        >
           <option value=""> Select a Team </option>
           {countries.map((country, index) => {
             return (
@@ -71,11 +74,15 @@ const Page = () => {
           })}
         </select>
       </div>
-      {/* Selecting the second team */}
       <div>
         <label htmlFor="secondTeam">Select Second Team : </label>
-        <select id="secondTeam" onChange={selectTeams} name="secondTeam">
-          <option value=""> Select a Team</option>
+        <select
+          id="secondTeam"
+          onChange={selectTeams}
+          name="secondTeam"
+          disabled={tossWinner !== ""}
+        >
+          <option value=""> select team</option>
           {filteredCountries.map((country, index) => {
             return (
               <option value={country} key={index}>
@@ -86,8 +93,22 @@ const Page = () => {
         </select>
       </div>
       <div>
-        <label htmlFor="over">How many overs : </label>
-        <input type="number" value={overs} onChange={(e) => handleOvers(e)} />
+        <label htmlFor="overs">Select Overs : </label>
+        <select
+          name="overs"
+          id="overs"
+          onChange={handleOvers}
+          disabled={tossWinner !== ""}
+        >
+          <option value="">select over</option>
+          {overValues.map((over, index) => {
+            return (
+              <option value={over} key={index}>
+                {over} over
+              </option>
+            );
+          })}
+        </select>
       </div>
       {/* Toss */}
       {teams.firstTeam && teams.secondTeam && overs && (
