@@ -12,8 +12,8 @@ import {
   updateWickets,
   changeStrike,
   updateBatsmanRun,
+  selectBowler,
   bowlBall,
-  setCurrentInning,
 } from "@/lib/features/cricketGame/gameSlice";
 import { generateRandomNumber } from "@/utils/generateRandomNumber";
 
@@ -28,6 +28,10 @@ const CricketGame = ({ params }) => {
   const gameState = useSelector((state) => state.game);
   const currentInning = gameState.currentInning;
   const inningData = gameState[currentInning];
+
+  const handleSelectBowler = (e) => {
+    dispatch(selectBowler(e.target.value));
+  };
 
   const handlePlay = () => {
     const random = generateRandomNumber(7);
@@ -136,7 +140,38 @@ const CricketGame = ({ params }) => {
               </div>
             )}
             <div style={{ display: "flex", justifyContent: "center" }}>
-              <button onClick={handlePlay}>Play</button>
+              <button
+                onClick={handlePlay}
+                disabled={!inningData.bowlerSelected}
+              >
+                Play
+              </button>
+              {!inningData.bowlerSelected && (
+                <div>
+                  <label htmlFor="bowler">Select Bowler</label>
+                  <select
+                    name="selectBowler"
+                    id="bowler"
+                    onChange={handleSelectBowler}
+                  >
+                    <option value="" disabled>
+                      do not select current bowler
+                    </option>
+                    {inningData.bowlingCountryPlayers
+                      .filter(
+                        (player) =>
+                          player.name !== inningData.currentBowler.name
+                      )
+                      .map((player, i) => {
+                        return (
+                          <option value={player.name} key={i}>
+                            {player.name}
+                          </option>
+                        );
+                      })}
+                  </select>
+                </div>
+              )}
             </div>
           </div>
         </div>

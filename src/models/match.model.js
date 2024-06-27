@@ -31,7 +31,12 @@ const inningSchema = new mongoose.Schema({
     default: 2,
   },
   currentBowler: {
-    type: playerSchema,
+    type: mongoose.Schema.Types.Mixed,
+  },
+
+  bowlerSelected: {
+    type: Boolean,
+    default: false,
   },
 
   totalRuns: {
