@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { fetchGame } from "@/app/actions/fetchGame";
-import { updateGame } from "@/app/actions/updateGame";
+import { fetchGame } from "@/app/server-actions/fetchGame";
+import { updateGame } from "@/app/server-actions/updateGame";
 import {
   initializeGame,
   selectBowler,

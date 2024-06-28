@@ -1,0 +1,16 @@
+.btn {
+  padding: 1rem 2rem;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  border: none;
+  border-radius: 1rem;
+  color: #ff4500;
+  background-color: wheat;
+  cursor: pointer;
+  transition: background-color 0.5s ease-in-out;
+}
+
+.btn:hover {
+  background-color: white;
+}

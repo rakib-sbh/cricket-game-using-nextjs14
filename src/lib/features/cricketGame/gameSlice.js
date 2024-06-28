@@ -1,5 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const findPlayerIndex = (state, batsmandIndex = true) => {
+  return batsmandIndex
+    ? state.battingCountryPlayers.findIndex(
+        (player) => player.name === state.strikeBatsman.name
+      )
+    : state.bowlingCountryPlayers.findIndex(
+        (player) => player.name === state.currentBowler.name
+      );
+};
+
 const gameSlice = createSlice({
   name: "cricket",
   initialState: {
@@ -66,46 +76,30 @@ const gameSlice = createSlice({
       const inning = state.currentInning;
       const { score } = action.payload;
 
-      // update the current over balls and scores
       state[inning].currentOverBalls += 1;
       state[inning].currentOverScores.push(score);
 
-      // updating oversplayed
-      state[inning].oversPlayed += 0.1;
+      state[inning].oversPlayed =
+        Math.round((state[inning].oversPlayed + 0.1) * 10) / 10;
       if (state[inning].currentOverBalls === 6) {
         state[inning].oversPlayed = Math.ceil(state[inning].oversPlayed);
       }
 
-      //! Updating bowler stats
-      //* current bowler stats
       state[inning].currentBowler.totalBallDelivered += 1;
 
-      //* bowler in the bowlingCountryPlayers stat
-      const bowlerIndex = state[inning].bowlingCountryPlayers.findIndex(
-        (player) => player.name === state[inning].currentBowler.name
-      );
+      const bowlerIndex = findPlayerIndex(state[inning], false);
       if (bowlerIndex !== -1) {
         state[inning].bowlingCountryPlayers[bowlerIndex] = {
           ...state[inning].bowlingCountryPlayers[bowlerIndex],
           totalBallDelivered: state[inning].currentBowler.totalBallDelivered,
         };
       }
-
-      //! updating batsman stat. It is depend upon score. If the score is wicket, then update wicketBy field
-
       state[inning].strikeBatsman.numberOfBallsPlayed += 1;
-      const batsmanIndex = state[inning].battingCountryPlayers.findIndex(
-        (player) => player.name === state[inning].strikeBatsman.name
-      );
+      const batsmanIndex = findPlayerIndex(state[inning]);
 
       if (score === -1) {
-        // also increase the total number of wickets of the innings
         state[inning].totalWickets += 1;
-        // this is wicket. so update numberOfWickets of the bowler
         state[inning].currentBowler.numberOfWickets += 1;
-        const bowlerIndex = state[inning].bowlingCountryPlayers.findIndex(
-          (player) => player.name === state[inning].currentBowler.name
-        );
         if (bowlerIndex !== -1) {
           state[inning].bowlingCountryPlayers[bowlerIndex] = {
             ...state[inning].bowlingCountryPlayers[bowlerIndex],
@@ -113,7 +107,6 @@ const gameSlice = createSlice({
           };
         }
 
-        // update wicketBy field for batsman
         state[inning].strikeBatsman.wicketBy = state[inning].currentBowler.name;
         if (batsmanIndex !== -1) {
           state[inning].battingCountryPlayers[batsmanIndex] = {
@@ -124,10 +117,7 @@ const gameSlice = createSlice({
           };
         }
       } else {
-        //! score is not wicket. Score can be (0, 1, 2, 3, 4, 6)
-        // update innings total run
         state[inning].totalRuns += score;
-        // update current batsman score
         state[inning].strikeBatsman.numberOfRuns += score;
         if (score == 4) {
           state[inning].strikeBatsman.numberOfFours += 1;
@@ -143,67 +133,94 @@ const gameSlice = createSlice({
         };
       }
 
-      // ! decision about strike change or innings complete or match complete
+      const {
+        totalRuns,
+        totalOvers,
+        totalWickets,
+        oversPlayed,
+        currentOverBalls,
+      } = state[inning];
+      let gameStatus = "";
+
       if (
         inning === "firstInning" &&
-        (state[inning].oversPlayed == state[inning].totalOvers ||
-          state[inning].totalWickets === 10)
+        (oversPlayed == totalOvers || totalWickets === 10)
       ) {
-        //TODO: implement functionality
-        state.firstInning.isCompleted = true;
-        state.currentInning = "secondInning";
-        state.secondInning.battingCountryPlayers =
-          state.firstInning.bowlingCountryPlayers;
-        state.secondInning.bowlingCountryPlayers =
-          state.firstInning.battingCountryPlayers;
-        state.target = state.firstInning.totalRuns + 1;
+        gameStatus = "FIRST_INNING_COMPLETE";
       } else if (
         inning === "secondInning" &&
-        state[inning].totalRuns >= state.target &&
-        (state[inning].oversPlayed <= state[inning].totalOvers ||
-          state[inning].totalWickets <= 10)
+        totalRuns >= state.target &&
+        (oversPlayed <= totalOvers || totalWickets <= 10)
       ) {
-        // second inning is completed and second inning batting country is winner
-        state.secondInning.isCompleted = true;
-        state.winner = state[inning].battingCountry;
+        gameStatus = "SECOND_INNING_WIN";
       } else if (
         inning === "secondInning" &&
-        state[inning].totalRuns < state.target &&
-        (state[inning].oversPlayed === state[inning].totalOvers ||
-          state[inning].totalWickets === 10)
+        totalRuns === state.target - 1 &&
+        (oversPlayed <= totalOvers || totalWickets <= 10)
       ) {
-        state.secondInning.isCompleted = true;
-        state.winner = state[inning].bowlingCountry;
+        gameStatus = "MATCH_TIE";
+      } else if (
+        inning === "secondInning" &&
+        totalRuns < state.target &&
+        (oversPlayed === totalOvers || totalWickets === 10)
+      ) {
+        gameStatus = "SECOND_INNING_LOSS";
       } else {
-        // inning is not completed.
-        // if the last score is wicket and it is the last ball of the over
-        if (score === -1 && state[inning].currentOverBalls === 6) {
-          // change the strike
-          state[inning].strikeBatsman = state[inning].nonStrikeBatsman;
-          state[inning].nonStrikeBatsman =
-            state[inning].battingCountryPlayers[
-              state[inning].nextBatsmanIndex++
-            ];
-        } else if (score === -1 && state[inning].currentOverBalls !== 6) {
-          // only change the strike batsman
-          state[inning].strikeBatsman =
-            state[inning].battingCountryPlayers[
-              state[inning].nextBatsmanIndex++
-            ];
-        } else if (score % 2 === 0 && state[inning].currentOverBalls === 6) {
-          // change the strike
-          const batsman = state[inning].strikeBatsman;
-          state[inning].strikeBatsman = state[inning].nonStrikeBatsman;
-          state[inning].nonStrikeBatsman = batsman;
-        } else if (score % 2 === 1 && state[inning].currentOverBalls !== 6) {
-          // change the strike
-          const batsman = state[inning].strikeBatsman;
-          state[inning].strikeBatsman = state[inning].nonStrikeBatsman;
-          state[inning].nonStrikeBatsman = batsman;
-        }
+        gameStatus = "INNING_NOT_COMPLETE";
       }
 
-      //! select next bowler based on current over balls
+      switch (gameStatus) {
+        case "FIRST_INNING_COMPLETE":
+          state.firstInning.isCompleted = true;
+          state.currentInning = "secondInning";
+          state.secondInning.battingCountryPlayers =
+            state.firstInning.bowlingCountryPlayers;
+          state.secondInning.bowlingCountryPlayers =
+            state.firstInning.battingCountryPlayers;
+          state.target = state.firstInning.totalRuns + 1;
+          break;
+
+        case "SECOND_INNING_WIN":
+          state.secondInning.isCompleted = true;
+          state.winner = state[inning].battingCountry;
+          break;
+
+        case "MATCH_TIE":
+          state.winner = "Match Tie";
+          break;
+
+        case "SECOND_INNING_LOSS":
+          state.secondInning.isCompleted = true;
+          state.winner = state[inning].bowlingCountry;
+          break;
+
+        case "INNING_NOT_COMPLETE":
+          if (score === -1 && currentOverBalls === 6) {
+            state[inning].strikeBatsman = state[inning].nonStrikeBatsman;
+            state[inning].nonStrikeBatsman =
+              state[inning].battingCountryPlayers[
+                state[inning].nextBatsmanIndex++
+              ];
+          } else if (score === -1 && currentOverBalls !== 6) {
+            state[inning].strikeBatsman =
+              state[inning].battingCountryPlayers[
+                state[inning].nextBatsmanIndex++
+              ];
+          } else if (score % 2 === 0 && currentOverBalls === 6) {
+            const batsman = state[inning].strikeBatsman;
+            state[inning].strikeBatsman = state[inning].nonStrikeBatsman;
+            state[inning].nonStrikeBatsman = batsman;
+          } else if (score % 2 === 1 && currentOverBalls !== 6) {
+            const batsman = state[inning].strikeBatsman;
+            state[inning].strikeBatsman = state[inning].nonStrikeBatsman;
+            state[inning].nonStrikeBatsman = batsman;
+          }
+          break;
+
+        default:
+          break;
+      }
+
       if (state[inning].currentOverBalls === 6) {
         state[inning].bowlerSelected = false;
       }

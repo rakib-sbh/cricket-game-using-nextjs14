@@ -1,17 +1,10 @@
 .main {
+  background-color: black;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  height: 100vh;
+  width: 100vw;
+  width: inherit;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  padding: 6rem;
-  min-height: 100vh;
-}
-
-.btn {
-  padding: 0.5rem;
-  margin: 0.5rem;
-}
-
-.btn:hover {
-  background-color: aqua;
 }
