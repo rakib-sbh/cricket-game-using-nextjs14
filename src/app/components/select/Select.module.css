@@ -1,7 +1,5 @@
-.card {
+.container {
   text-align: center;
-  flex: 1;
-  min-height: 600px;
   color: white;
   background-color: #333;
   padding: 1rem;
@@ -12,14 +10,14 @@
 }
 
 .card_title {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   color: #ff4500;
   font-size: 2.5rem;
 }
 
 .card_label {
   font-size: 1.4rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .card_select {

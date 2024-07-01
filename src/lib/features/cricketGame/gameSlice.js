@@ -1,13 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
+import data from "@/data/team-and-players"
 
 const findPlayerIndex = (state, batsmandIndex = true) => {
   return batsmandIndex
     ? state.battingCountryPlayers.findIndex(
-        (player) => player.name === state.strikeBatsman.name
-      )
+      (player) => player.name === state.strikeBatsman.name
+    )
     : state.bowlingCountryPlayers.findIndex(
-        (player) => player.name === state.currentBowler.name
-      );
+      (player) => player.name === state.currentBowler.name
+    );
 };
 
 const gameSlice = createSlice({
@@ -58,6 +59,29 @@ const gameSlice = createSlice({
   },
 
   reducers: {
+    gameCreate: (state, action) => {
+      const { teams, overs, tossWinner, winnerDecision } = action.payload;
+
+      const inning = state.currentInning;
+
+      if (winnerDecision === "batting") {
+        state[inning].battingCountry = tossWinner;
+        state[inning].battingCountryPlayers = data[tossWinner];
+
+        state[inning].bowlingCountry = tossWinner === teams.firstTeam ? teams.secondTeam : teams.firstTeam;
+        state[inning].bowlingCountryPlayers = data[state[inning].bowlingCountry]
+      } else {
+        state[inning].bowlingCountry = tossWinner;
+        state[inning].bowlingCountryPlayers = data[tossWinner];
+
+        state[inning].battingCountry = tossWinner === teams.firstTeam ? teams.secondTeam : teams.firstTeam;
+        state[inning].battingCountryPlayers = data[state[inning].battingCountry]
+      }
+
+      state[inning].totalOvers = overs;
+      state.toss.winnerCountry = tossWinner;
+      state.toss.decision = winnerDecision;
+    },
     initializeGame: (_state, action) => {
       return action.payload;
     },
@@ -199,12 +223,12 @@ const gameSlice = createSlice({
             state[inning].strikeBatsman = state[inning].nonStrikeBatsman;
             state[inning].nonStrikeBatsman =
               state[inning].battingCountryPlayers[
-                state[inning].nextBatsmanIndex++
+              state[inning].nextBatsmanIndex++
               ];
           } else if (score === -1 && currentOverBalls !== 6) {
             state[inning].strikeBatsman =
               state[inning].battingCountryPlayers[
-                state[inning].nextBatsmanIndex++
+              state[inning].nextBatsmanIndex++
               ];
           } else if (score % 2 === 0 && currentOverBalls === 6) {
             const batsman = state[inning].strikeBatsman;
@@ -228,6 +252,6 @@ const gameSlice = createSlice({
   },
 });
 
-export const { initializeGame, selectBowler, bowlBall } = gameSlice.actions;
+export const { gameCreate, initializeGame, selectBowler, bowlBall } = gameSlice.actions;
 
 export default gameSlice.reducer;

@@ -4,6 +4,8 @@ import Match from "@/models/match.model";
 import { connect } from "@/db/connect";
 
 const fetchGame = async (id) => {
+
+  console.log("id", id);
   // db connection
   connect();
 

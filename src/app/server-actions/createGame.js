@@ -5,6 +5,9 @@ import Match from "@/models/match.model";
 import { connect } from "@/db/connect";
 import { redirect } from "next/navigation";
 
+import fs from "fs";
+import path from "path";
+
 const selectBattingAndBowlingCountry = (teams, winnerDecision, tossWinner) => {
   let battingCountry;
   let bowlingCountry;
@@ -32,6 +35,7 @@ const makePlayerList = (country) => {
     };
   });
 };
+
 
 const createGame = async ({ teams, overs, tossWinner, winnerDecision }) => {
   // db connection
@@ -74,13 +78,19 @@ const createGame = async ({ teams, overs, tossWinner, winnerDecision }) => {
     secondInning,
     toss: {
       winnerCountry: tossWinner,
-      decision: winnerDecision,
-    },
+      decision: winnerDecision
+    }
   });
 
   match = await match.save();
 
-  redirect(`/matches/${match._id}`);
+  // const filePath = path.join(process.cwd(), "src", "utils", "currentGameId.txt");
+  // fs.writeFileSync(filePath, match._id.toString());
+
+  // redirect("/matches")
+
+  match = match ? JSON.parse(JSON.stringify(match)) : null;
+  return match._id;
 };
 
 export { createGame };

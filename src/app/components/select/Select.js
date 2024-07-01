@@ -2,7 +2,7 @@ import styles from "./Select.module.css";
 
 const Select = ({ name, handleSelect, tossWinner, data, teams }) => {
   return (
-    <div className={styles.card}>
+    <div className={styles.container}>
       <h1 className={styles.card_title}>Team {name === "firstTeam" ? 1 : 2}</h1>
       <label className={styles.card_label}>Choose a team : </label>
       <select
