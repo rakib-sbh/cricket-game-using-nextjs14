@@ -1,10 +1,13 @@
 import styles from "./Select.module.css";
+import { GAME } from "@/constants/gameConstants";
 
 const Select = ({ name, handleSelect, tossWinner, data, teams }) => {
   return (
     <div className={styles.container}>
-      <h1 className={styles.card_title}>Team {name === "firstTeam" ? 1 : 2}</h1>
-      <label className={styles.card_label}>Choose a team : </label>
+      <h1 className={styles.card_title}>
+        {GAME.TEAM} {name === GAME.FIRST_TEAM ? 1 : 2}
+      </h1>
+      <label className={styles.card_label}>{GAME.CHOOSE_TEAAM_TEXT} </label>
       <select
         className={styles.card_select}
         name={name}
@@ -13,7 +16,7 @@ const Select = ({ name, handleSelect, tossWinner, data, teams }) => {
         value={teams[name]}
       >
         <option value="" disabled>
-          Select team 1
+          {GAME.SELECT_TEAM_TEXT}
         </option>
         {data
           .filter(

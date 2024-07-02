@@ -1,0 +1,83 @@
+.team_container {
+  flex: 1;
+  text-align: center;
+  margin: 10px;
+  padding: 20px;
+  background-color: #e0e0e0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.team_container,
+.current_game {
+  flex: 1;
+  text-align: center;
+  margin: 10px;
+  padding: 20px;
+  background-color: #e0e0e0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.current_game {
+  background-color: #d0d0d0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.th,
+.td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.th {
+  text-align: center;
+}
+
+.th {
+  background-color: #f0f0f0;
+}
+
+.tr {
+  border-bottom: 1px solid #ccc;
+}
+
+.currentBowler {
+  background-color: #e84393;
+  color: white;
+}
+
+.bowlerSelection {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.selectBowlerContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.bowlerLabel {
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #333;
+}
+
+.bowlerSelect {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  background-color: #f5f5f5;
+  color: #333;
+  cursor: pointer;
+}

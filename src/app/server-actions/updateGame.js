@@ -5,15 +5,12 @@ import Match from "@/models/match.model";
 import { revalidatePath } from "next/cache";
 
 const updateGame = async ({ id, gameState }) => {
-  // db connection
-  connect();
-
   try {
+    connect();
     await Match.findByIdAndUpdate(id, gameState, { new: true });
-    console.log("Game state updated");
     revalidatePath(`/summary/${id}`);
   } catch (error) {
-    console.log("Error updating game state");
+    process.exit(1);
   }
 };
 

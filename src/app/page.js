@@ -1,14 +1,14 @@
 import Link from "next/link";
 
 import styles from "./page.module.css";
-import Button from "./components/button/Button";
+import { GAME } from "@/constants/gameConstants";
 
 const Page = () => {
   return (
     <main className={styles.main}>
       <div>
         <Link href={"/create-match"}>
-          <Button text={"Start Playing"} />
+          <button className={styles.btn}>{GAME.START}</button>
         </Link>
       </div>
     </main>

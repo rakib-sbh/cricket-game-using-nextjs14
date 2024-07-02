@@ -1,0 +1,7 @@
+.game_header {
+  width: 100%;
+  background-color: #f0f0f0;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 2px -2px gray;
+}

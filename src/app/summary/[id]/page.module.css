@@ -5,7 +5,7 @@
 
 .summary_header {
   background-color: black;
-  color: #ff4500;
+  color: white;
   padding: 20px;
   text-align: center;
   border-bottom: 1px solid #ddd;
@@ -35,7 +35,7 @@
 .inning_heading {
   text-align: center;
   margin-bottom: 20px;
-  color: #ff4500;
+  color: white;
 }
 
 .inning_summary,
@@ -44,7 +44,7 @@
 }
 
 .inning_summary h2 {
-  color: #ff4500;
+  color: white;
 }
 
 .batting_table,

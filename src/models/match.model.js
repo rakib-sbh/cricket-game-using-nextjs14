@@ -1,5 +1,5 @@
 import mongoose, { Mongoose } from "mongoose";
-import { playerSchema } from "./player.model";
+import { playerSchema } from "@/schemas/player.schema";
 
 const inningSchema = new mongoose.Schema({
   battingCountry: {
@@ -97,6 +97,7 @@ const matchSchema = new mongoose.Schema({
 
   winner: {
     type: String,
+    default: "",
   },
 });
 

@@ -1,0 +1,15 @@
+.bowling_table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.batting_table th,
+.batting_table td,
+.bowling_table th,
+.bowling_table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+  color: white;
+}

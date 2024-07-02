@@ -1,5 +1,4 @@
 .main {
-  background-color: black;
   display: flex;
   height: 100vh;
   width: 100vw;
@@ -7,4 +6,21 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.btn {
+  padding: 1rem 2rem;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  border: none;
+  border-radius: 1rem;
+  color: white;
+  background-color: black;
+  cursor: pointer;
+  transition: background-color 0.5s ease-in-out;
+}
+
+.btn:hover {
+  background-color: white;
 }

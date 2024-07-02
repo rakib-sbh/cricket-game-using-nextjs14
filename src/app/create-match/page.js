@@ -1,17 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 
-import data from "@/data/team-and-players";
 import { generateRandomNumber } from "@/utils/generateRandomNumber";
 import { createGame } from "../server-actions/createGame";
 import { gameCreate } from "@/lib/features/cricketGame/gameSlice";
-
 import Select from "../components/select/Select";
-
 import styles from "./page.module.css";
-import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "next/navigation";
+import data from "@/data/team-and-players";
+import { GAME } from "@/constants/gameConstants";
 
 const countries = Object.keys(data);
 const overValues = [1, 2, 3, 5, 10];
@@ -51,12 +50,15 @@ const Page = () => {
   const handleWinnerDecision = async (e) => {
     const { value } = e.target;
     dispatch(gameCreate({ teams, overs, tossWinner, winnerDecision: value }));
-    const matchId = await createGame({ teams, overs, tossWinner, winnerDecision: value });
+    const matchId = await createGame({
+      teams,
+      overs,
+      tossWinner,
+      winnerDecision: value,
+    });
     localStorage.setItem("gameId", matchId);
-    router.push("/matches")
+    router.push("/play-match");
   };
-
-
 
   return (
     <div>
@@ -71,24 +73,24 @@ const Page = () => {
             teams={teams}
           />
           <div className={styles.table_container}>
-            {
-              teams.firstTeam && <table className={styles.table}>
+            {teams.firstTeam && (
+              <table className={styles.table}>
                 <thead>
                   <tr>
                     <th className={styles.th}>{teams.firstTeam}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {
-                    data[teams.firstTeam].map((player, index) => {
-                      return <tr key={index}>
+                  {data[teams.firstTeam].map((player, index) => {
+                    return (
+                      <tr key={index}>
                         <td className={styles.td}>{player.name}</td>
                       </tr>
-                    })
-                  }
+                    );
+                  })}
                 </tbody>
               </table>
-            }
+            )}
           </div>
         </div>
         <div className={styles.card}>
@@ -112,8 +114,12 @@ const Page = () => {
           </div>
           <div>
             {teams.firstTeam && teams.secondTeam && overs && (
-              <button onClick={handleToss} disabled={tossWinner !== ""} className={styles.btn}>
-                Toss
+              <button
+                onClick={handleToss}
+                disabled={tossWinner !== ""}
+                className={styles.btn}
+              >
+                {GAME.TOSS}
               </button>
             )}
           </div>
@@ -127,8 +133,20 @@ const Page = () => {
           <div>
             {tossWinner && (
               <div>
-                <button value={"batting"} onClick={handleWinnerDecision} className={styles.btn}>Batting</button>
-                <button value={"bowling"} onClick={handleWinnerDecision} className={styles.btn}>Bowling</button>
+                <button
+                  value={"batting"}
+                  onClick={handleWinnerDecision}
+                  className={styles.btn}
+                >
+                  {GAME.BATTING}
+                </button>
+                <button
+                  value={"bowling"}
+                  onClick={handleWinnerDecision}
+                  className={styles.btn}
+                >
+                  {GAME.BOWLING}
+                </button>
               </div>
             )}
           </div>
@@ -142,24 +160,24 @@ const Page = () => {
             teams={teams}
           />
           <div className={styles.table_container}>
-            {
-              teams.secondTeam && <table className={styles.table}>
+            {teams.secondTeam && (
+              <table className={styles.table}>
                 <thead>
                   <tr>
                     <th className={styles.th}>{teams.secondTeam}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {
-                    data[teams.secondTeam].map((player, index) => {
-                      return <tr key={index}>
+                  {data[teams.secondTeam].map((player, index) => {
+                    return (
+                      <tr key={index}>
                         <td className={styles.td}>{player.name}</td>
                       </tr>
-                    })
-                  }
+                    );
+                  })}
                 </tbody>
               </table>
-            }
+            )}
           </div>
         </div>
       </div>

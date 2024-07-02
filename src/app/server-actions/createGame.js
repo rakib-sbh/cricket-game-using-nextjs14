@@ -3,10 +3,6 @@
 import data from "@/data/team-and-players";
 import Match from "@/models/match.model";
 import { connect } from "@/db/connect";
-import { redirect } from "next/navigation";
-
-import fs from "fs";
-import path from "path";
 
 const selectBattingAndBowlingCountry = (teams, winnerDecision, tossWinner) => {
   let battingCountry;
@@ -36,11 +32,7 @@ const makePlayerList = (country) => {
   });
 };
 
-
 const createGame = async ({ teams, overs, tossWinner, winnerDecision }) => {
-  // db connection
-  connect();
-
   let { battingCountry, bowlingCountry } = selectBattingAndBowlingCountry(
     teams,
     winnerDecision,
@@ -50,8 +42,6 @@ const createGame = async ({ teams, overs, tossWinner, winnerDecision }) => {
   const battingCountryPlayers = makePlayerList(battingCountry);
 
   const bowlingCountryPlayers = makePlayerList(bowlingCountry);
-
-  //   creating match
   let firstInning = {
     battingCountry,
     bowlingCountry,
@@ -78,19 +68,18 @@ const createGame = async ({ teams, overs, tossWinner, winnerDecision }) => {
     secondInning,
     toss: {
       winnerCountry: tossWinner,
-      decision: winnerDecision
-    }
+      decision: winnerDecision,
+    },
   });
 
-  match = await match.save();
-
-  // const filePath = path.join(process.cwd(), "src", "utils", "currentGameId.txt");
-  // fs.writeFileSync(filePath, match._id.toString());
-
-  // redirect("/matches")
-
-  match = match ? JSON.parse(JSON.stringify(match)) : null;
-  return match._id;
+  try {
+    connect();
+    match = await match.save();
+    match = match ? JSON.parse(JSON.stringify(match)) : null;
+    return match._id;
+  } catch (error) {
+    process.exit(1);
+  }
 };
 
 export { createGame };
