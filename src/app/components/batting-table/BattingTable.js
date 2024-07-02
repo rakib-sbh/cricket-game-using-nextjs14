@@ -1,5 +1,6 @@
 import styles from "./BattingTable.module.css";
 import { GAME } from "@/constants/gameConstants";
+import { calculateStrikeRate } from "@/utils/calculateStrikeRate";
 
 const BattingTable = ({ players }) => {
   return (
@@ -43,7 +44,7 @@ const BattingTable = ({ players }) => {
                 <td>{numberOfFours}</td>
                 <td>{numberOfSixes}</td>
                 <td>
-                  {Math.floor((numberOfRuns / numberOfBallsPlayed) * 100)}
+                  {calculateStrikeRate(numberOfRuns, numberOfBallsPlayed)}
                 </td>
               </tr>
             );

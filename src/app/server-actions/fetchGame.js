@@ -1,16 +1,15 @@
 "use server";
 
-import Match from "@/models/match.model";
-import { connect } from "@/db/connect";
+import matchRepository from "@/repositories/matchRepository";
 
 const fetchGame = async (id) => {
-  try {
-    connect();
-    const matchData = await Match.findById(id).lean();
-    return matchData ? JSON.parse(JSON.stringify(matchData)) : null;
-  } catch (error) {
-    process.exit();
+  const matchData = await matchRepository.fetchGameById(id);
+
+  if (!matchData) {
+    process.exit(1);
   }
+
+  return matchData;
 };
 
 export { fetchGame };

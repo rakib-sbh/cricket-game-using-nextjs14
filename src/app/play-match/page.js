@@ -19,6 +19,8 @@ import Header from "../components/header/Header";
 import BattingTeam from "../components/batting-team/BattingTeam";
 import BowlingTeam from "../components/bowling-team/BowlingTeam";
 import { GAME } from "@/constants/gameConstants";
+import Score from "../components/score/Score";
+import Over from "../components/over/Over";
 
 const scoreTypes = [0, 1, 2, 3, 4, 6, -1];
 
@@ -72,43 +74,19 @@ const Game = () => {
     }
   }, [currentScore, gameState, id]);
 
-  console.log("game state", gameState);
-
   return (
     <div className={styles.game_container}>
       <Header gameState={gameState} />
       <main className={styles.game_body}>
         <BattingTeam inningData={inningData} />
         <div className={`${styles.current_game} ${styles.verticalLayout}`}>
-          <div className={styles.scoreSection}>
-            <h2 className={styles.scoreHeader}>
-              {inningData.bowlingCountry} vs {inningData.battingCountry}
-            </h2>
-            <div className={styles.scoreDetails}>
-              <span className={styles.currentScore}>
-                {inningData.totalRuns}-{inningData.totalWickets}
-              </span>
-              <span className={styles.oversPlayed}>
-                {inningData.oversPlayed} overs ({inningData.totalOvers})
-              </span>
+          {gameState.currentInning === GAME.SECOND_INNINGS && (
+            <div className={styles.target_section}>
+              <h2>Target : {gameState.target}</h2>
             </div>
-          </div>
-          <div className={styles.overSection}>
-            <h2>
-              This Over{" "}
-              <span className={styles.ballContainer}>
-                {inningData.currentOverScores.map((score, index) => (
-                  <span key={index} className={styles.ball}>
-                    {score === -1 ? (
-                      <span className={styles.wicket}>{GAME.WICKET}</span>
-                    ) : (
-                      score
-                    )}
-                  </span>
-                ))}
-              </span>
-            </h2>
-          </div>
+          )}
+          <Score inningData={inningData} />
+          <Over inningData={inningData} />
 
           <div className={styles.simulateSection}>
             <button

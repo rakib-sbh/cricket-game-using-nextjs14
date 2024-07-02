@@ -28,6 +28,7 @@ const GAME = {
   SELECT_TEAM_TEXT: "Select team",
   TEAM: "Team",
   CHOOSE_TEAAM_TEXT: "Choose a team",
+  BATTING_CONDITION: "batting",
 };
 
 export { GAME };

@@ -18,9 +18,10 @@
   color: white;
   background-color: black;
   cursor: pointer;
-  transition: background-color 0.5s ease-in-out;
+  transition: background-color 0.2s ease-in-out;
 }
 
 .btn:hover {
-  background-color: white;
+  background-color: #d3d3d3;
+  color: black;
 }

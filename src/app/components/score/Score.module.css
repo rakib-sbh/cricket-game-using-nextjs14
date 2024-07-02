@@ -1,0 +1,30 @@
+.scoreSection {
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.scoreHeader {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.scoreDetails {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.currentScore {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #d9534f;
+}
+
+.oversPlayed {
+  font-size: 1rem;
+  color: #555;
+}
