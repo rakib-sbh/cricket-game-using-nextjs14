@@ -1,5 +1,6 @@
 import data from "@/data/team-and-players";
 import { GAME } from "@/constants/gameConstants";
+import matchRepository from "@/repositories/matchRepository";
 
 const selectBattingAndBowlingCountry = (teams, winnerDecision, tossWinner) => {
   let battingCountry;
@@ -29,7 +30,7 @@ const makePlayerList = (country) => {
   });
 };
 
-const createNewGame = ({ teams, overs, tossWinner, winnerDecision }) => {
+const createNewGame = async ({ teams, overs, tossWinner, winnerDecision }) => {
   let { battingCountry, bowlingCountry } = selectBattingAndBowlingCountry(
     teams,
     winnerDecision,
@@ -47,7 +48,6 @@ const createNewGame = ({ teams, overs, tossWinner, winnerDecision }) => {
     bowlingCountryPlayers,
     strikeBatsman: battingCountryPlayers[0],
     nonStrikeBatsman: battingCountryPlayers[1],
-    currentBowler: "",
     totalOvers: overs,
   };
   let secondInning = {
@@ -57,7 +57,6 @@ const createNewGame = ({ teams, overs, tossWinner, winnerDecision }) => {
     bowlingCountryPlayers: battingCountryPlayers,
     strikeBatsman: bowlingCountryPlayers[0],
     nonStrikeBatsman: bowlingCountryPlayers[1],
-    currentBowler: "",
     totalOvers: overs,
   };
 
@@ -70,7 +69,12 @@ const createNewGame = ({ teams, overs, tossWinner, winnerDecision }) => {
     },
   };
 
-  return matchData;
+  try {
+    let match = await matchRepository.create(matchData);
+    return match._id;
+  } catch (error) {
+    process.exit(1);
+  }
 };
 
 export { createNewGame };

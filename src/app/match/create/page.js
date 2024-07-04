@@ -5,9 +5,9 @@ import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 
 import { generateRandomNumber } from "@/utils/generateRandomNumber";
-import { createGame } from "../server-actions/createGame";
+import { createGame } from "@/app/server-actions/createGame";
 import { gameCreate } from "@/lib/features/cricketGame/gameSlice";
-import Select from "../components/select/Select";
+import Select from "@/app/components/select/Select";
 import styles from "./page.module.css";
 import data from "@/data/team-and-players";
 import { GAME } from "@/constants/gameConstants";
@@ -56,8 +56,10 @@ const Page = () => {
       tossWinner,
       winnerDecision: value,
     });
+
+    console.log("matchid", matchId);
     localStorage.setItem("gameId", matchId);
-    router.push("/play-match");
+    router.push(`/match/${matchId}`);
   };
 
   return (

@@ -1,10 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import matchRepository from "@/repositories/matchRepository";
+
+import { updateGameById } from "@/services/updateGameById";
 
 const updateGame = async ({ id, gameState }) => {
-  await matchRepository.updateGameById(id, gameState);
+  const isOk = await updateGameById(id, gameState);
+
+  if (!isOk) {
+    process.exit(1);
+  }
+
   revalidatePath(`/summary/${id}`);
 };
 

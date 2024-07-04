@@ -16,7 +16,12 @@ class MatchRepository {
     return matchData ? JSON.parse(JSON.stringify(matchData)) : null;
   }
   async updateGameById(id, gameState) {
-    await Match.findByIdAndUpdate(id, gameState, { new: true });
+    try {
+      await Match.findByIdAndUpdate(id, gameState, { new: true });
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }
 

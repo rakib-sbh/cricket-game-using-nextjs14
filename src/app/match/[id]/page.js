@@ -2,11 +2,10 @@
 
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-import { fetchGame } from "../server-actions/fetchGame";
-import { updateGame } from "../server-actions/updateGame";
+import { fetchGame } from "@/app/server-actions/fetchGame";
+import { updateGame } from "@/app/server-actions/updateGame";
 import {
   initializeGame,
   selectBowler,
@@ -15,20 +14,19 @@ import {
 import { generateRandomNumber } from "@/utils/generateRandomNumber";
 
 import styles from "./page.module.css";
-import Header from "../components/header/Header";
-import BattingTeam from "../components/batting-team/BattingTeam";
-import BowlingTeam from "../components/bowling-team/BowlingTeam";
+import Header from "@/app/components/header/Header";
+import BattingTeam from "@/app/components/batting-team/BattingTeam";
+import BowlingTeam from "@/app/components/bowling-team/BowlingTeam";
 import { GAME } from "@/constants/gameConstants";
-import Score from "../components/score/Score";
-import Over from "../components/over/Over";
+import Score from "@/app/components/score/Score";
+import Over from "@/app/components/over/Over";
 
 const scoreTypes = [0, 1, 2, 3, 4, 6, -1];
 
-const Game = () => {
+const Game = ({ params }) => {
+  const { id } = params;
   const dispatch = useDispatch();
   const [currentScore, setCurrentScore] = useState("");
-  const [id, setId] = useState(null);
-  const router = useRouter();
 
   const gameState = useSelector((state) => state.game);
   const currentInning = gameState.currentInning;
@@ -46,15 +44,6 @@ const Game = () => {
     dispatch(selectBowler(e.target.value));
     setCurrentScore("Bowler selected");
   };
-
-  const handleSummaryClick = () => {
-    router.push(`/summary/${id}`);
-  };
-
-  useEffect(() => {
-    const storedId = localStorage.getItem("gameId");
-    setId(storedId);
-  }, []);
 
   useEffect(() => {
     const fetchGameData = async () => {
@@ -103,10 +92,8 @@ const Game = () => {
             </div>
           )}
           <div className={styles.summarySection}>
-            <Link href={`/summary/${id}`} prefetch={false}>
-              <button className={styles.btn} onClick={handleSummaryClick}>
-                {GAME.MATCH_SUMMARY}
-              </button>
+            <Link href={`/match/${id}/summary`} prefetch={false}>
+              <button className={styles.btn}>{GAME.MATCH_SUMMARY}</button>
             </Link>
           </div>
         </div>

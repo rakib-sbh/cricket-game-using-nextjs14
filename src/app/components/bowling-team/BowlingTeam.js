@@ -14,7 +14,7 @@ const BowlingTeam = ({ inningData, handleSelectBowler }) => {
         <tbody>
           {inningData.bowlingCountryPlayers.map((player, index) => {
             const isCurrentBowler =
-              player.name === inningData.currentBowler.name;
+              player.name === inningData?.currentBowler?.name;
             return (
               <tr
                 key={index}
@@ -43,7 +43,7 @@ const BowlingTeam = ({ inningData, handleSelectBowler }) => {
               <option value="">{GAME.SELECT_CURRENT_BOWLER}</option>
               {inningData.bowlingCountryPlayers
                 .filter(
-                  (player) => player.name !== inningData.currentBowler.name
+                  (player) => player.name !== inningData?.currentBowler?.name
                 )
                 .map((player, i) => {
                   return (

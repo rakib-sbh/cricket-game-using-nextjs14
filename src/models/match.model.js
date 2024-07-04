@@ -31,7 +31,8 @@ const inningSchema = new mongoose.Schema({
     default: 2,
   },
   currentBowler: {
-    type: mongoose.Schema.Types.Mixed,
+    // type: mongoose.Schema.Types.Mixed,
+    type: playerSchema,
   },
 
   bowlerSelected: {
@@ -62,7 +63,7 @@ const inningSchema = new mongoose.Schema({
   },
   currentOverScores: [
     {
-      type: mongoose.Schema.Types.Mixed,
+      type: Number,
     },
   ],
 

@@ -1,6 +1,3 @@
-export const dynamic = "force-dynamic";
-export const revalidate = 10;
-
 import { GAME } from "@/constants/gameConstants";
 import { fetchGame } from "@/app/server-actions/fetchGame";
 import { connect } from "@/db/connect";

@@ -7,7 +7,7 @@ const Page = () => {
   return (
     <main className={styles.main}>
       <div>
-        <Link href={"/create-match"}>
+        <Link href={"/match/create"}>
           <button className={styles.btn}>{GAME.START}</button>
         </Link>
       </div>
